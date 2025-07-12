@@ -1,10 +1,16 @@
-package com.example.demo.entities;
+package com.example.demo.station.entities;
+
+import java.util.Optional;
+
+import com.example.demo.city.entities.City;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -15,19 +21,21 @@ public class Station {
     private long id;
 
     @Column(name = "name", nullable = false)
-    @NotBlank(message = "Station name cannot be empty")
     private String name;
 
     @Column(name = "code", nullable = false)
-    @NotBlank(message = "Station Code cannot be empty")
-    @Size(min = 3, max = 5, message = "Station code must be 3-5 characters long")
     private String code;
 
-    protected Station() {}
+    @ManyToOne
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
 
-    public Station(String name, String code) {
+    public Station() {}
+
+    public Station(String name, String code, City city) {
         this.name = name;
         this.code = code;
+        this.city = city;
     }
 
     public long getId() {
@@ -50,6 +58,15 @@ public class Station {
 
     public String getCode() {
         return this.code;
+    }
+
+    public Station setCity(City city) {
+        this.city = city;
+        return this;
+    }
+
+    public City getCity() {
+        return this.city;
     }
 
     @Override
