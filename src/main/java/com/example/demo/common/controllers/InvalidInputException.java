@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class InvalidInputException extends RuntimeException {
     
-    private String message;
     private String errorCode;
 
     public InvalidInputException() {}

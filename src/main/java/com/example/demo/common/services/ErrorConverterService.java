@@ -36,7 +36,6 @@ public class ErrorConverterService {
             return this.getAllFieldsErrorsAndConvertToArray(bindingResult);
         }
         List<Map<String, String>> errorList = new ArrayList<>();
-        Map<String, Boolean> keysMap = new HashMap<>();
         bindingResult.getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             Map<String, String> err = new HashMap<>();

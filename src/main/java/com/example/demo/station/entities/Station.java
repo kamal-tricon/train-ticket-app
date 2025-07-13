@@ -1,7 +1,5 @@
 package com.example.demo.station.entities;
 
-import java.util.Optional;
-
 import com.example.demo.city.entities.City;
 
 import jakarta.persistence.Column;
@@ -11,8 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 @Entity(name = "stations")
 public class Station {
