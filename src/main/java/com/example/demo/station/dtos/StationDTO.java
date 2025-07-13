@@ -1,9 +1,5 @@
 package com.example.demo.station.dtos;
 
-import com.example.demo.city.entities.City;
-import com.example.demo.station.entities.Station;
-
-import io.micrometer.common.lang.NonNull;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

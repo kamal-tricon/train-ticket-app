@@ -1,6 +1,8 @@
 package com.example.demo.station.services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.city.entities.City;
 import com.example.demo.city.repositories.CityRepository;
+import com.example.demo.common.controllers.InvalidInputException;
+import com.example.demo.common.controllers.InvalidInputsException;
 import com.example.demo.station.dtos.StationDTO;
 import com.example.demo.station.entities.Station;
 import com.example.demo.station.repositories.StationRepository;
@@ -26,25 +30,39 @@ public class StationService {
 
     public Station createStation(StationDTO station) {
         String stationCode = station.getCode();
+        Map<String, String> errors = new HashMap<>();
+
+        // Below commented throw new <Exception> are to emit the error on individual field
+        // With Current setup, all the errors in the API request will be thown at the same time
+        // Always free to change this behaviour
 
         if(this.stationRepository.findByCode(stationCode).isPresent()) {
-            throw new IllegalArgumentException("Station with code '" + stationCode + "' already exists");
+            errors.put("code", "Station with code '" + stationCode + "' already exists");
+            // throw new InvalidInputException("Station with code '" + stationCode + "' already exists", "INVALID_FIELDS" + "_STATION_CODE");
         }
 
         for (char ch: stationCode.toCharArray()) {
             if (!Character.isLetter(ch)) {
-                throw new IllegalArgumentException("All characters of station code must be alphabets only");
+                errors.put("name", "All characters of station code must be alphabets only");
+                // throw new IllegalArgumentException("All characters of station code must be alphabets only");
             }
         }
 
+        City city = null;
+
         if (station.getCityId() == 0) {
-            throw new IllegalArgumentException("'cityId' is mandatory");
+            errors.put("cityId", "'cityId' field is mandatory");
+            // throw new IllegalArgumentException("'cityId' is mandatory");
+        } else {
+            city = this.cityRepository.findById(station.getCityId()).orElse(null);
+            if (city == null) {
+                errors.put("cityId", "'cityId' field is invalid");
+                // throw new IllegalArgumentException("'cityId' field is invalid");
+            }
         }
 
-        City city = this.cityRepository.findById(station.getCityId()).orElse(null);
-
-        if (city == null) {
-            throw new IllegalArgumentException("'cityId' field is invalid");
+        if (!errors.isEmpty()) {
+            throw new InvalidInputsException(errors, "INVALID_FIELDS");
         }
 
         Station entity = new Station();
