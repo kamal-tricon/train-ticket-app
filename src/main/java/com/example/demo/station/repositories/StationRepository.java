@@ -13,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface StationRepository extends JpaRepository<Station, Long> {
     Optional<Station> findByCode(String code);
     List<Station> findByCity_Id(long id);
+    List<Station> findByCodeOrId(String code, long id);
 }
