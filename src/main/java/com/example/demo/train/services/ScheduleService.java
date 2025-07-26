@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class ScheduleService {
+
     private final TrainRepository trainRepository;
     private final ScheduleRepository scheduleRepository;
     private final StationRepository stationRepository;
@@ -40,6 +41,7 @@ public class ScheduleService {
         String trainNumber = scheduleDTO.getTrainNumber();
         long stationId = scheduleDTO.getStationId();
         String stationCode = scheduleDTO.getStationCode();
+        int stoppageNumber = scheduleDTO.getStoppageNumber();
 
         List<Train> trains = null;
 
@@ -69,9 +71,52 @@ public class ScheduleService {
         arrivalTime = scheduleDTO.getArrivalTime() == null ? null : LocalTime.parse(scheduleDTO.getArrivalTime());
         departurTime = scheduleDTO.getDepartureTime() == null ? null : LocalTime.parse(scheduleDTO.getDepartureTime());
 
-        Schedule schedule = new Schedule(trains.get(0), stations.get(0), arrivalTime, departurTime, Days.ALL);
+        if (!isValidArrivalTime(trains.get(0), scheduleDTO.getArrivalTime())) {
+            throw new InvalidInputException(arrivalTime == null ? "This train cannot start its journey from two stations" : "This train cannot reach two stations at the same time");
+        }
+        if (!isValidDepartureTime(trains.get(0), scheduleDTO.getDepartureTime())) {
+            throw new InvalidInputException(departurTime == null ? "This train cannot end its journey at two stations" : "This train cannot depart from two stations at the same time");
+        }
+
+        if (arrivalTime == null) {
+            stoppageNumber = 0;
+        }
+
+        Schedule schedule = new Schedule(trains.get(0), stations.get(0), arrivalTime, departurTime, Days.ALL, stoppageNumber);
 
         return this.scheduleRepository.save(schedule);
+    }
+
+    public List<Schedule> findAll(String trainNumber) {
+        return this.scheduleRepository.findAllByTrain_Number(trainNumber);
+    }
+
+    public List<Object[]> getTrainsBetweenTwoStations(long startStation, long endStation) {
+        return this.scheduleRepository.findListSchedulesOfConnectingStations(startStation, endStation);
+    }
+
+    private boolean isValidArrivalTime(Train train, String arrivalTime) {
+        if (train == null) {
+            return false;
+        }
+        LocalTime arrivalTimeParsed = arrivalTime == null ? null : LocalTime.parse(arrivalTime);
+        if (scheduleRepository.existsByArrivalTimeAndTrain_Id(arrivalTimeParsed, train.getId())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isValidDepartureTime(Train train, String departureTime) {
+        if (train == null) {
+            return false;
+        }
+        LocalTime departureTimeParsed = departureTime == null ? null : LocalTime.parse(departureTime);
+        if (scheduleRepository.existsByDepartureTimeAndTrain_Id(departureTimeParsed, train.getId())) {
+            return false;
+        }
+
+        return true;
     }
 
 

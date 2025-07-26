@@ -1,5 +1,6 @@
 package com.example.demo.common.services;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,16 @@ public class ErrorConverterService {
             .setUri(req.getContextPath())
             .setHttpCode(HttpStatus.BAD_REQUEST)
             .setMessage(ex.getMessage());
+        return cer;
+    }
+
+    public CustomErrorResponse convertToGlobalErrorResponse(SQLIntegrityConstraintViolationException ex, WebRequest req) {
+        CustomErrorResponse cer = new CustomErrorResponse();
+        cer
+            .setErrorCode(null)
+            .setUri(req.getContextPath())
+            .setHttpCode(HttpStatus.CONFLICT)
+            .setMessage("A schedule with this combination of train and station already exists");
         return cer;
     }
 

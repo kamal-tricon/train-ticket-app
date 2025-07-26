@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.city.entities.City;
 import com.example.demo.city.repositories.CityRepository;
-import com.example.demo.common.controllers.InvalidInputException;
 import com.example.demo.common.controllers.InvalidInputsException;
 import com.example.demo.station.dtos.StationDTO;
 import com.example.demo.station.entities.Station;
@@ -22,7 +20,6 @@ public class StationService {
     private final StationRepository stationRepository;
     private final CityRepository cityRepository;
 
-    @Autowired
     public StationService(StationRepository sRepository, CityRepository cRepository) {
         this.stationRepository = sRepository;
         this.cityRepository = cRepository;

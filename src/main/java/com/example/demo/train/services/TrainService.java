@@ -26,6 +26,10 @@ public class TrainService {
             }
         }
 
+        if (trainRepository.existsByNumber(trainNumber)) {
+            throw new InvalidInputException("A train with number already exists", "INVALID_TRAIN_NUMBER");
+        }
+
         Train entity = new Train(
             train.getTrainNumber(),
             train.getTrainName(),

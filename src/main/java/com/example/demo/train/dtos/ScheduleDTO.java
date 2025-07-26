@@ -1,7 +1,5 @@
 package com.example.demo.train.dtos;
 
-import java.time.LocalTime;
-
 import com.example.demo.common.models.enums.Days;
 
 import jakarta.annotation.Nullable;
@@ -18,6 +16,8 @@ public class ScheduleDTO {
     private long stationId;
 
     private String stationCode;
+
+    private int stoppageNumber;
 
     @Nullable
     @Pattern(regexp = "^([01]?[0-9]|2[0-3]):[0-5][0-9]$", message = "Arrival time must be in HH:MM format")
@@ -106,6 +106,14 @@ public class ScheduleDTO {
 
     public void setStationCode(String stationCode) {
         this.stationCode = stationCode;
+    }
+
+    public int getStoppageNumber() {
+        return stoppageNumber;
+    }
+
+    public void setStoppageNumber(int stoppageNumber) {
+        this.stoppageNumber = stoppageNumber;
     }
 
     
